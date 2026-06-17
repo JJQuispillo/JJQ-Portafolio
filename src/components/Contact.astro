@@ -1,0 +1,267 @@
+---
+import { translations, type Lang } from '../data/translations';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'es' } = Astro.props;
+const t = translations[lang];
+
+const contact = {
+  email: "jjquispillo@gmail.com",
+  linkedin: "linkedin.com/in/usuario",
+  github: "github.com/JJQUISPILLO",
+};
+
+const links = [
+  { name: "GitHub", url: `https://${contact.github}`, key: "GitHub" },
+  { name: "LinkedIn", url: `https://${contact.linkedin}`, key: "LinkedIn" },
+  { name: "Email", url: `mailto:${contact.email}`, key: "Email" },
+];
+---
+
+<section class="contact" id="contact">
+  <div class="container">
+    <header class="section-header">
+      <span class="section-label">{t.contact.label}</span>
+      <h2 class="section-title">{t.contact.title}</h2>
+    </header>
+
+    <div class="contact-content">
+      <p class="contact-intro">
+        {t.contact.intro}
+      </p>
+
+      <a href={`mailto:${contact.email}`} class="contact-email">
+        <span class="email-label">{t.contact.sayHello}</span>
+        <span class="email-address">{contact.email}</span>
+        <svg class="email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+        </svg>
+      </a>
+
+      <div class="contact-links">
+        {links.map(link => (
+          <a href={link.url} target="_blank" rel="noopener noreferrer" class="contact-link">
+            <span class="link-name">{link.name}</span>
+            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="brand-bracket">&lt;</span>JJQ<span class="brand-bracket">/&gt;</span>
+        </div>
+        <p class="footer-copy">{t.contact.footer}</p>
+        <div class="footer-tech">
+          <span>{t.contact.astropy}</span>
+          <span class="dot"></span>
+          <span>2024</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding: 8rem 2rem 4rem;
+    position: relative;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--magenta);
+    letter-spacing: 0.3em;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-content {
+    text-align: center;
+  }
+
+  .contact-intro {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--gray);
+    margin-bottom: 3rem;
+  }
+
+  .contact-email {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 3rem;
+    background: var(--surface);
+    border: 1px solid var(--gray-dark);
+    text-decoration: none;
+    transition: all 0.4s var(--transition);
+    margin-bottom: 2rem;
+  }
+
+  .contact-email:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 10px 40px rgba(0, 255, 245, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .email-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--gray);
+    letter-spacing: 0.2em;
+  }
+
+  .email-address {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--white);
+  }
+
+  .email-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--cyan);
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: all 0.3s ease;
+  }
+
+  .contact-email:hover .email-icon {
+    opacity: 1;
+    transform: translate(4px, -4px);
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--gray-dark);
+    text-decoration: none;
+    transition: all 0.3s var(--transition);
+  }
+
+  .contact-link:hover {
+    border-color: var(--magenta);
+    color: var(--magenta);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 0, 170, 0.15);
+  }
+
+  .link-name {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--white);
+  }
+
+  .link-arrow {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transform: translate(-4px, 0);
+    transition: all 0.3s ease;
+  }
+
+  .contact-link:hover .link-arrow {
+    opacity: 1;
+    transform: translate(4px, 0);
+  }
+
+  .footer {
+    margin-top: 6rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-dark);
+  }
+
+  .footer-content {
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+
+  .brand-bracket {
+    color: var(--magenta);
+  }
+
+  .footer-copy {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-tech {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--gray);
+  }
+
+  .dot {
+    width: 4px;
+    height: 4px;
+    background: var(--cyan);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 600px) {
+    .contact-email {
+      width: 100%;
+      padding: 1.5rem;
+    }
+
+    .contact-links {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contact-link {
+      width: 100%;
+      max-width: 200px;
+      justify-content: center;
+    }
+  }
+</style>

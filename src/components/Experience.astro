@@ -1,0 +1,72 @@
+---
+import { translations, type Lang } from '../data/translations';
+import { getExperience } from '../lib/content';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'es' } = Astro.props;
+const t = translations[lang];
+const exp = await getExperience(lang);
+---
+
+<section class="experience" id="experience">
+  <div class="container">
+    <header class="section-header">
+      <span class="section-label">{t.experience.label}</span>
+      <h2 class="section-title">{t.experience.title}</h2>
+    </header>
+
+    <div class="timeline">
+      <article class="timeline-item">
+        <div class="timeline-marker">
+          <span class="marker-dot"></span>
+          <span class="marker-line"></span>
+        </div>
+        
+        <div class="timeline-content">
+          <header class="exp-header">
+            <span class="exp-period">{exp?.period || '2022 - Presente'}</span>
+            <span class="exp-location">{exp?.location || 'Ecuador'}</span>
+          </header>
+          
+          <h3 class="exp-role">{exp?.role || 'Full Stack Developer & DevOps'}</h3>
+          <h4 class="exp-company">{exp?.company || 'Nombre de la Empresa'}</h4>
+          
+          <ul class="exp-list">
+            {(exp?.highlights || []).map(h => (
+              <li><span class="list-marker"></span>{h}</li>
+            ))}
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience { padding: 8rem 2rem; background: var(--surface); position: relative; }
+  .experience::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gray-dark), transparent); }
+  .container { max-width: 900px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-label { display: block; font-family: var(--font-mono); font-size: 0.8rem; color: var(--magenta); letter-spacing: 0.3em; margin-bottom: 0.75rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.02em; }
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { display: grid; grid-template-columns: 40px 1fr; gap: 1.5rem; }
+  .timeline-marker { display: flex; flex-direction: column; align-items: center; padding-top: 0.5rem; }
+  .marker-dot { width: 12px; height: 12px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 15px var(--cyan); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 10px var(--cyan); } 50% { box-shadow: 0 0 25px var(--cyan), 0 0 40px var(--cyan); } }
+  .marker-line { width: 2px; flex: 1; background: linear-gradient(to bottom, var(--cyan), transparent); margin-top: 1rem; opacity: 0.3; }
+  .timeline-content { padding-bottom: 3rem; }
+  .exp-header { display: flex; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  .exp-period { font-family: var(--font-mono); font-size: 0.8rem; color: var(--magenta); letter-spacing: 0.05em; }
+  .exp-location { font-size: 0.8rem; color: var(--gray); }
+  .exp-role { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--white); margin-bottom: 0.25rem; }
+  .exp-company { font-family: var(--font-body); font-size: 1rem; color: var(--cyan); margin-bottom: 1.25rem; }
+  .exp-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .exp-list li { display: flex; gap: 0.75rem; font-size: 0.95rem; line-height: 1.6; color: var(--gray); }
+  .list-marker { width: 6px; height: 6px; background: var(--gray-dark); border-radius: 50%; flex-shrink: 0; margin-top: 0.5rem; }
+  .exp-list li:hover .list-marker { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  @media (max-width: 600px) { .timeline-item { grid-template-columns: 24px 1fr; gap: 1rem; } .exp-role { font-size: 1.2rem; } }
+</style>

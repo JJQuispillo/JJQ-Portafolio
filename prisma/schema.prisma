@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Technology {
+  id          Int      @id @default(autoincrement())
+  name       String    @unique
+  icon        String
+  category    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Project {
+  id           Int      @id @default(autoincrement())
+  name         String
+  nameEn       String
+  description  String
+  descriptionEn String
+  order        Int      @default(0)
+  color        String   @default("#00fff5")
+  techStack    String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Experience {
+  id            Int      @id @default(autoincrement())
+  company       String
+  companyEn     String
+  role          String
+  roleEn        String
+  period        String
+  periodEn      String
+  location      String   @default("Ecuador")
+  locationEn    String   @default("Ecuador")
+  order        Int      @default(0)
+  highlights   String[]
+  highlightsEn String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Education {
+  id           Int      @id @default(autoincrement())
+  degree       String
+  degreeEn     String
+  institution  String
+  year         String
+  order       Int      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Language {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  nameEn   String
+  level    String
+  levelEn  String
+  note     String?
+  noteEn   String?
+  order   Int     @default(0)
+}
+
+model Translation {
+  id      Int     @id @default(autoincrement())
+  lang   String
+  section String
+  key    String
+  value  String
+  
+  @@unique([lang, section, key])
+  @@index([lang, section])
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  name        String
+  title     String
+  titleEn   String
+  subtitle  String
+  subtitleEn String
+  tagline   String
+  taglineEn String
+  email     String
+  phone     String?
+  linkedin  String?
+  github   String?
+  location  String   @default("Ecuador")
+  photoUrl  String?
+  status    String   @default("available")
+  updatedAt DateTime @updatedAt
+}
