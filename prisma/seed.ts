@@ -101,12 +101,14 @@ async function main() {
     },
   ];
 
+  await prisma.project.deleteMany();
   for (const project of projects) {
     await prisma.project.create({ data: project });
   }
   console.log('✓ Projects seeded');
 
   // Seed Experience
+  await prisma.experience.deleteMany();
   await prisma.experience.create({
     data: {
       company: 'Nombre de la Empresa',
@@ -135,6 +137,7 @@ async function main() {
   console.log('✓ Experience seeded');
 
   // Seed Education
+  await prisma.education.deleteMany();
   await prisma.education.create({
     data: {
       degree: 'Ingeniería de Sistemas Inteligentes',
@@ -153,7 +156,11 @@ async function main() {
   ];
 
   for (const lang of languages) {
-    await prisma.language.create({ data: lang });
+    await prisma.language.upsert({
+      where: { name: lang.name },
+      update: lang,
+      create: lang,
+    });
   }
   console.log('✓ Languages seeded');
 
