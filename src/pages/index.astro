@@ -1,193 +1,25 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Hero from "../components/Hero.astro";
-import TechStack from "../components/TechStack.astro";
-import Experience from "../components/Experience.astro";
-import Projects from "../components/Projects.astro";
-import Education from "../components/Education.astro";
-import Contact from "../components/Contact.astro";
-import { getTranslations, type Lang } from "../lib/content";
-
-const lang = (Astro.url.searchParams.get("lang") as Lang) || "es";
-const t = await getTranslations(lang);
 ---
-
-<Layout>
-    <nav class="navbar" id="navbar">
-        <a href="#hero" class="nav-logo">
-            <span class="logo-bracket">&lt;</span>JJQ<span class="logo-bracket"
-                >/&gt;</span
-            >
-        </a>
-
-        <div class="nav-links">
-            <a href="#skills" class="nav-link"
-                ><span class="link-num">01.</span><span class="link-label"
-                    >{t.nav.skills}</span
-                ></a
-            >
-            <a href="#experience" class="nav-link"
-                ><span class="link-num">02.</span><span class="link-label"
-                    >{t.nav.experience}</span
-                ></a
-            >
-            <a href="#projects" class="nav-link"
-                ><span class="link-num">03.</span><span class="link-label"
-                    >{t.nav.projects}</span
-                ></a
-            >
-            <a href="#education" class="nav-link"
-                ><span class="link-num">04.</span><span class="link-label"
-                    >{t.nav.education}</span
-                ></a
-            >
-            <a href="#contact" class="nav-link"
-                ><span class="link-num">05.</span><span class="link-label"
-                    >{t.nav.contact}</span
-                ></a
-            >
-        </div>
-
-        <div class="lang-switch">
-            <a
-                href="/?lang=es"
-                class={`lang-btn ${lang === "es" ? "active" : ""}`}>es</a
-            >
-            <span class="lang-divider">/</span>
-            <a
-                href="/?lang=en"
-                class={`lang-btn ${lang === "en" ? "active" : ""}`}>en</a
-            >
-        </div>
-    </nav>
-
-    <main>
-        <Hero lang={lang} />
-        <TechStack lang={lang} />
-        <Experience lang={lang} />
-        <Projects lang={lang} />
-        <Education lang={lang} />
-        <Contact lang={lang} />
-    </main>
-</Layout>
-
-<script>
-    const navbar = document.getElementById("navbar");
-    window.addEventListener("scroll", () => {
-        navbar?.classList.toggle("scrolled", window.scrollY > 50);
-    });
-
-    document.querySelectorAll(".nav-link").forEach((link) => {
-        link.addEventListener("mouseenter", () => {
-            const num = link.querySelector(".link-num");
-            num?.classList.add("active");
-        });
-        link.addEventListener("mouseleave", () => {
-            const num = link.querySelector(".link-num");
-            num?.classList.remove("active");
-        });
-    });
-</script>
-
-<style>
-    .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem 3rem;
-        transition: all 0.4s var(--transition-slow);
-    }
-    .navbar.scrolled {
-        padding: 1rem 3rem;
-        background: rgba(5, 5, 8, 0.9);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .nav-logo {
-        font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--white);
-        text-decoration: none;
-        letter-spacing: 0.05em;
-        transition: all 0.3s ease;
-    }
-    .nav-logo:hover {
-        color: var(--cyan);
-        text-shadow: 0 0 20px var(--cyan);
-    }
-    .logo-bracket {
-        color: var(--magenta);
-    }
-    .nav-links {
-        display: flex;
-        gap: 2rem;
-    }
-    .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    .link-num {
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        color: var(--magenta);
-        opacity: 0;
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-    }
-    .link-num.active {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .link-label {
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-        color: var(--gray);
-        transition: color 0.3s ease;
-    }
-    .nav-link:hover .link-label,
-    .nav-link.active .link-label {
-        color: var(--white);
-    }
-    .lang-switch {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .lang-btn {
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        color: var(--gray);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    .lang-btn:hover {
-        color: var(--white);
-    }
-    .lang-btn.active {
-        color: var(--cyan);
-        text-shadow: 0 0 10px var(--cyan);
-    }
-    .lang-divider {
-        color: var(--gray-dark);
-    }
-    @media (max-width: 768px) {
-        .navbar {
-            padding: 1rem 1.5rem;
-        }
-        .nav-links {
-            gap: 1rem;
-        }
-        .link-num {
-            display: none;
-        }
-    }
-</style>
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="noindex" />
+		<title>Redirigiendo / Redirecting</title>
+		<link rel="canonical" href="/es/" />
+		<link rel="alternate" hreflang="es" href="/es/" />
+		<link rel="alternate" hreflang="en" href="/en/" />
+		<script is:inline>
+			(function () {
+				var q = new URLSearchParams(location.search).get("lang");
+				var target = q === "en" ? "/en/" : "/es/";
+				location.replace(target);
+			})();
+		</script>
+		<meta http-equiv="refresh" content="0; url=/es/" />
+	</head>
+	<body>
+		<p>Redirigiendo a <a href="/es/">/es/</a>. <a href="/en/">English</a>.</p>
+	</body>
+</html>

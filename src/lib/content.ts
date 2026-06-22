@@ -68,75 +68,146 @@ export async function getTechnologies() {
   }
 }
 
+const staticProjects = {
+  es: [
+    { slug: "modulo-pos-admenterprise", name: "Módulo POS — ERP ADMenterprise", description: "Punto de venta del ERP ADMenterprise con React, SignalR en tiempo real e integración SRI.", details: "", repoUrl: null, screenshots: [], tech: ["React", ".NET", "SignalR", "SQL Server"], color: "#00fff5" },
+    { slug: "adm-mayordomo-gestion-personal", name: "ADMMAYORDOMO — App de gestión de personal", description: "App móvil offline-first para soporte y control de personal en campo con Flutter.", details: "", repoUrl: null, screenshots: [], tech: ["Flutter", "BLoC", "SQLite", "Flask"], color: "#ff00aa" },
+  ],
+  en: [
+    { slug: "modulo-pos-admenterprise", name: "POS Module — ADMenterprise ERP", description: "ERP point-of-sale module with React, real-time SignalR, and SRI integration.", details: "", repoUrl: null, screenshots: [], tech: ["React", ".NET", "SignalR", "SQL Server"], color: "#00fff5" },
+    { slug: "adm-mayordomo-gestion-personal", name: "ADMMAYORDOMO — Staff Management App", description: "Offline-first mobile app for field support and personnel management with Flutter.", details: "", repoUrl: null, screenshots: [], tech: ["Flutter", "BLoC", "SQLite", "Flask"], color: "#ff00aa" },
+  ]
+};
+
 export async function getProjects(lang: Lang) {
   if (!isDbConfigured) {
-    const projects = {
-      es: [
-        { name: "Sistema POS Web", description: "Migración de aplicación de escritorio legacy a web. React + .NET, integración con impresoras térmicas.", tech: ["React", ".NET", "SignalR", "Nginx"], color: "#00fff5" },
-        { name: "App Gestión Agrícola", description: "Flutter offline-first para gestión de labores agrícolas con foto-evidencia.", tech: ["Flutter", "Dart", "BLoC", "PostgreSQL"], color: "#ff00aa" },
-        { name: "Módulos ERP", description: "Facturación electrónica, integración SRI, lógica contable.", tech: ["Python", "FastAPI", "SQL Server", "Docker"], color: "#8b00ff" },
-        { name: "CI/CD Pipelines", description: "Diseño e implementación de pipelines automatizados con Dokploy.", tech: ["Dokploy", "Docker", "Ubuntu", "Nginx"], color: "#00d4ff" }
-      ],
-      en: [
-        { name: "POS Web System", description: "Migration of legacy desktop app to web. React + .NET, thermal printer integration.", tech: ["React", ".NET", "SignalR", "Nginx"], color: "#00fff5" },
-        { name: "Agricultural App", description: "Offline-first Flutter app for farm labor management with photo evidence.", tech: ["Flutter", "Dart", "BLoC", "PostgreSQL"], color: "#ff00aa" },
-        { name: "ERP Modules", description: "Electronic invoicing, SRI integration, accounting logic for ERP.", tech: ["Python", "FastAPI", "SQL Server", "Docker"], color: "#8b00ff" },
-        { name: "CI/CD Pipelines", description: "Design and implementation of automated pipelines with Dokploy.", tech: ["Dokploy", "Docker", "Ubuntu", "Nginx"], color: "#00d4ff" }
-      ]
-    };
-    return projects[lang];
+    return staticProjects[lang];
   }
 
   try {
     const projects = await prisma.project.findMany({
       orderBy: { order: 'asc' },
     });
-    return projects.map(p => ({
+    const mapped = projects.map(p => ({
+      slug: p.slug,
       name: lang === 'es' ? p.name : p.nameEn,
       description: lang === 'es' ? p.description : p.descriptionEn,
+      details: lang === 'es' ? p.details : p.detailsEn,
+      repoUrl: p.repoUrl,
+      screenshots: p.screenshots,
       tech: p.techStack || [],
       color: p.color,
     }));
+    if (mapped.length === 0 || mapped.some(p => !p.slug)) {
+      return staticProjects[lang];
+    }
+    return mapped;
   } catch (error) {
     console.warn('[DB] Projects fallback:', (error as Error).message);
-    return [];
+    return staticProjects[lang];
   }
+}
+
+export async function getProjectBySlug(slug: string, lang: Lang) {
+  const projects = await getProjects(lang);
+  return projects.find(p => p.slug === slug) || null;
 }
 
 export async function getExperience(lang: Lang) {
   if (!isDbConfigured) {
-    const exp = {
-      es: { period: "2022 - Presente", role: "Desarrollador Full Stack & DevOps", company: "Nombre de la Empresa", highlights: [
-        "Lideré la migración de un Sistema POS desde escritorio a web con React y .NET",
-        "Implementé integración con impresoras térmicas y navegación optimizada",
-        "Desarrollé app Flutter offline-first para gestión agrícola con foto-evidencia",
-        "Diseñé pipelines CI/CD con Dokploy, reduciendo tiempos de despliegue"
-      ]},
-      en: { period: "2022 - Present", role: "Full Stack Developer & DevOps", company: "Company Name", highlights: [
-        "Led migration of a POS System from desktop to web with React and .NET",
-        "Implemented thermal printer integration and optimized keyboard navigation",
-        "Developed offline-first Flutter app for agricultural management with photo evidence",
-        "Designed CI/CD pipelines with Dokploy, reducing deployment times"
-      ]}
+    const experiences = {
+      es: [
+        {
+          period: "2024-03 — 2026-05",
+          role: "Desarrollador Full Stack & DevOps",
+          company: "BIROBID S.A.",
+          location: "Ecuador",
+          highlights: [
+            "Desarrollé y mantuve frontend y backend de múltiples aplicaciones (React, Flutter, .NET, Python) y módulos clave del ERP: facturación electrónica, SRI y lógica contable.",
+            "Diseñé e implementé pipelines CI/CD con Dokploy (despliegue por push), reduciendo el despliegue manual de horas a minutos.",
+            "Creé Dockerfiles y configuraciones Docker Compose; administré servidores Ubuntu con Nginx/Apache y balanceo de carga para alta disponibilidad.",
+            "Diseñé APIs RESTful seguras (JWT, OAuth, API Keys) en .NET y Python, e implementé SignalR para reactividad de stock en tiempo real.",
+            "Estandaricé el control de versiones del equipo: GitHub Organizations, protección de ramas, convenciones de commits y code review.",
+          ],
+        },
+        {
+          period: "2025-01 — 2025-12",
+          role: "Desarrollador Web Freelance",
+          company: "Freelance",
+          location: "Ecuador (Remoto)",
+          highlights: [
+            "Desarrollé sitios web modernos con Astro (SSG/SSR), landing pages y blogs optimizados para rendimiento y SEO.",
+            "Construí y mantuve sitios web en WordPress con temas personalizados, plugins y optimización de velocidad.",
+            "Implementé automatizaciones de procesos usando scripts en Python/JavaScript, integraciones de APIs y flujos de CI/CD.",
+            "Entregué proyectos llave en mano: hosting, dominio, despliegue y mantenimiento para clientes locales.",
+          ],
+        },
+        {
+          period: "2025-02 — 2025-05",
+          role: "Food & Beverage Team Member",
+          company: "Cabana Bay Beach Resort — Universal Orlando",
+          location: "Orlando, Florida, EE. UU.",
+          highlights: [
+            "Trabajé en un entorno 100% en inglés, poniendo en práctica y fortaleciendo mis habilidades de comunicación oral y atención al cliente en inglés.",
+            "Me desempeñé en áreas de alto volumen como restaurante, bar y eventos, manejando pedidos y coordinación con cocina bajo presión.",
+          ],
+        },
+      ],
+      en: [
+        {
+          period: "2024-03 — 2026-05",
+          role: "Full Stack Developer & DevOps",
+          company: "BIROBID S.A.",
+          location: "Ecuador",
+          highlights: [
+            "Developed and maintained frontend and backend of multiple applications (React, Flutter, .NET, Python) and key ERP modules: electronic invoicing, SRI, and accounting logic.",
+            "Designed and implemented CI/CD pipelines with Dokploy (push-to-deploy), reducing manual deployment from hours to minutes.",
+            "Created Dockerfiles and Docker Compose configurations; managed Ubuntu servers with Nginx/Apache and load balancing for high availability.",
+            "Designed secure RESTful APIs (JWT, OAuth, API Keys) in .NET and Python, and implemented SignalR for real-time stock reactivity.",
+            "Standardized team version control: GitHub Organizations, branch protection, commit conventions, and code review.",
+          ],
+        },
+        {
+          period: "2025-01 — 2025-12",
+          role: "Freelance Web Developer",
+          company: "Freelance",
+          location: "Ecuador (Remote)",
+          highlights: [
+            "Developed modern websites with Astro (SSG/SSR), landing pages and blogs optimized for performance and SEO.",
+            "Built and maintained WordPress websites with custom themes, plugins, and speed optimization.",
+            "Implemented process automation using Python/JavaScript scripts, API integrations, and CI/CD workflows.",
+            "Delivered turnkey projects: hosting, domain, deployment, and maintenance for local clients.",
+          ],
+        },
+        {
+          period: "2025-02 — 2025-05",
+          role: "Food & Beverage Team Member",
+          company: "Cabana Bay Beach Resort — Universal Orlando",
+          location: "Orlando, Florida, USA",
+          highlights: [
+            "Worked in a 100% English-speaking environment, practicing and strengthening oral communication and customer service skills in English.",
+            "Performed in high-volume areas such as restaurant, bar, and events, handling orders and kitchen coordination under pressure.",
+          ],
+        },
+      ],
     };
-    return exp[lang];
+    return experiences[lang];
   }
 
   try {
-    const exp = await prisma.experience.findFirst({
+    const exp = await prisma.experience.findMany({
       orderBy: { order: 'asc' },
     });
-    if (!exp) return null;
-    return {
-      period: lang === 'es' ? exp.period : exp.periodEn,
-      role: lang === 'es' ? exp.role : exp.roleEn,
-      company: lang === 'es' ? exp.company : exp.companyEn,
-      location: lang === 'es' ? exp.location : exp.locationEn,
-      highlights: lang === 'es' ? exp.highlights : exp.highlightsEn,
-    };
+    return exp.map(e => ({
+      period: lang === 'es' ? e.period : e.periodEn,
+      role: lang === 'es' ? e.role : e.roleEn,
+      company: lang === 'es' ? e.company : e.companyEn,
+      location: lang === 'es' ? e.location : e.locationEn,
+      highlights: lang === 'es' ? e.highlights : e.highlightsEn,
+    }));
   } catch (error) {
     console.warn('[DB] Experience fallback:', (error as Error).message);
-    return null;
+    return [];
   }
 }
 
@@ -196,7 +267,7 @@ export async function getProfile() {
       tagline: "Building the future, one commit at a time",
       email: "jjquispillo@gmail.com",
       github: "JJQUISPILLO",
-      linkedin: "linkedin.com/in/usuario",
+      linkedin: "johnjairoquispillodev",
     };
   }
 

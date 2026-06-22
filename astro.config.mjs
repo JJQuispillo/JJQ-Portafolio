@@ -1,10 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+// Phase 3 rollback: uncomment next line + `adapter` below + set `output: 'server'` to restore SSR.
+// import node from '@astrojs/node';
 
 export default defineConfig({
-  output: 'server',
-  adapter: node({
-    mode: 'standalone'
-  })
+  output: 'static',
+  // Phase 3 rollback: adapter: node({ mode: 'standalone' }),
 });

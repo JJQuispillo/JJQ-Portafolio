@@ -44,24 +44,14 @@ export const translations = {
       title: "PROYECTOS",
       list: [
         {
-          name: "Sistema POS Web",
-          description: "Migración de aplicación de escritorio legacy a web. React + .NET, integración con impresoras térmicas.",
-          tech: ["React", ".NET", "SignalR", "Nginx"]
+          name: "Módulo POS — ERP ADMenterprise",
+          description: "Punto de venta del ERP ADMenterprise con React, SignalR en tiempo real e integración SRI.",
+          tech: ["React", ".NET", "SignalR", "SQL Server"]
         },
         {
-          name: "App Gestión Agrícola",
-          description: "Flutter offline-first para gestión de labores agrícolas con foto-evidencia y sincronización.",
-          tech: ["Flutter", "Dart", "BLoC", "PostgreSQL"]
-        },
-        {
-          name: "Módulos ERP",
-          description: "Facturación electrónica, integración SRI, lógica contable para sistema ERP empresarial.",
-          tech: ["Python", "FastAPI", "SQL Server", "Docker"]
-        },
-        {
-          name: "CI/CD Pipelines",
-          description: "Diseño e implementación de pipelines automatizados con Dokploy.",
-          tech: ["Dokploy", "Docker", "Ubuntu", "Nginx"]
+          name: "ADMMAYORDOMO — App de gestión de personal",
+          description: "App móvil offline-first para soporte y control de personal en campo con Flutter.",
+          tech: ["Flutter", "BLoC", "SQLite", "Flask"]
         }
       ]
     },
@@ -134,24 +124,14 @@ export const translations = {
       title: "PROJECTS",
       list: [
         {
-          name: "POS Web System",
-          description: "Migration of legacy desktop app to web. React + .NET, thermal printer integration.",
-          tech: ["React", ".NET", "SignalR", "Nginx"]
+          name: "POS Module — ADMenterprise ERP",
+          description: "ERP point-of-sale module with React, real-time SignalR, and SRI integration.",
+          tech: ["React", ".NET", "SignalR", "SQL Server"]
         },
         {
-          name: "Agricultural App",
-          description: "Offline-first Flutter app for farm labor management with photo evidence.",
-          tech: ["Flutter", "Dart", "BLoC", "PostgreSQL"]
-        },
-        {
-          name: "ERP Modules",
-          description: "Electronic invoicing, SRI integration, accounting logic for ERP.",
-          tech: ["Python", "FastAPI", "SQL Server", "Docker"]
-        },
-        {
-          name: "CI/CD Pipelines",
-          description: "Design and implementation of automated pipelines with Dokploy.",
-          tech: ["Dokploy", "Docker", "Ubuntu", "Nginx"]
+          name: "ADMMAYORDOMO — Staff Management App",
+          description: "Offline-first mobile app for field support and personnel management with Flutter.",
+          tech: ["Flutter", "BLoC", "SQLite", "Flask"]
         }
       ]
     },

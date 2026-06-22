@@ -1,0 +1,109 @@
+---
+interface Props {
+  label: string;
+  title: string;
+  variant?: "default" | "bordered" | "icon" | "minimal";
+}
+
+const { label, title, variant = "default" } = Astro.props;
+---
+
+<header class="section-header" data-variant={variant}>
+  {variant === "default" && (
+    <>
+      <span class="section-label">{label}</span>
+      <h2 class="section-title">{title}</h2>
+    </>
+  )}
+  {variant === "bordered" && (
+    <>
+      <div class="header-line"></div>
+      <div>
+        <span class="section-label">{label}</span>
+        <h2 class="section-title">{title}</h2>
+      </div>
+      <div class="header-line"></div>
+    </>
+  )}
+  {variant === "icon" && (
+    <>
+      <span class="section-icon" aria-hidden="true">&lt;/&gt;</span>
+      <span class="section-label">{label}</span>
+      <h2 class="section-title">{title}</h2>
+    </>
+  )}
+  {variant === "minimal" && (
+    <>
+      <h2 class="section-title">{title}</h2>
+      <span class="section-label">{label}</span>
+    </>
+  )}
+</header>
+
+<style>
+  .section-header {
+    margin-bottom: var(--space-7);
+  }
+
+  .section-header[data-variant="default"],
+  .section-header[data-variant="icon"] {
+    text-align: center;
+  }
+
+  .section-header[data-variant="bordered"] {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    text-align: left;
+  }
+
+  .section-header[data-variant="minimal"] {
+    text-align: left;
+  }
+
+  .section-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    margin-bottom: var(--space-3);
+  }
+
+  .section-header[data-variant="minimal"] .section-label {
+    margin-top: var(--space-2);
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-3xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .header-line:last-child {
+    background: linear-gradient(90deg, transparent, var(--accent));
+  }
+
+  .section-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--accent);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-3);
+  }
+</style>

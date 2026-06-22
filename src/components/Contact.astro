@@ -1,5 +1,7 @@
 ---
+import SectionHeader from './SectionHeader.astro';
 import { translations, type Lang } from '../data/translations';
+import { getProfile } from '../lib/content';
 
 interface Props {
   lang?: Lang;
@@ -8,34 +10,27 @@ interface Props {
 const { lang = 'es' } = Astro.props;
 const t = translations[lang];
 
-const contact = {
-  email: "jjquispillo@gmail.com",
-  linkedin: "linkedin.com/in/usuario",
-  github: "github.com/JJQUISPILLO",
-};
+const profile = await getProfile() || { email: "jjquispillo@gmail.com", github: "JJQUISPILLO", linkedin: "johnjairoquispillodev" };
 
 const links = [
-  { name: "GitHub", url: `https://${contact.github}`, key: "GitHub" },
-  { name: "LinkedIn", url: `https://${contact.linkedin}`, key: "LinkedIn" },
-  { name: "Email", url: `mailto:${contact.email}`, key: "Email" },
+  { name: "GitHub", url: `https://github.com/${profile.github}`, key: "GitHub" },
+  { name: "LinkedIn", url: `https://linkedin.com/in/${profile.linkedin}`, key: "LinkedIn" },
+  { name: "Email", url: `mailto:${profile.email}`, key: "Email" },
 ];
 ---
 
-<section class="contact" id="contact">
+<section class="contact" id="contact" data-accent="contact">
   <div class="container">
-    <header class="section-header">
-      <span class="section-label">{t.contact.label}</span>
-      <h2 class="section-title">{t.contact.title}</h2>
-    </header>
+    <SectionHeader variant="minimal" label={t.contact.label} title={t.contact.title} />
 
     <div class="contact-content">
       <p class="contact-intro">
         {t.contact.intro}
       </p>
 
-      <a href={`mailto:${contact.email}`} class="contact-email">
+      <a href={`mailto:${profile.email}`} class="contact-email">
         <span class="email-label">{t.contact.sayHello}</span>
-        <span class="email-address">{contact.email}</span>
+        <span class="email-address">{profile.email}</span>
         <svg class="email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
         </svg>
@@ -71,34 +66,13 @@ const links = [
 
 <style>
   .contact {
-    padding: 8rem 2rem 4rem;
+    padding: var(--space-10) var(--space-6) var(--space-8);
     position: relative;
   }
 
   .container {
-    max-width: 700px;
+    max-width: var(--container-narrow);
     margin: 0 auto;
-  }
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  .section-label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--magenta);
-    letter-spacing: 0.3em;
-    margin-bottom: 0.75rem;
-  }
-
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
   }
 
   .contact-content {
@@ -106,86 +80,90 @@ const links = [
   }
 
   .contact-intro {
-    font-size: 1.1rem;
+    font-size: var(--fs-md);
     line-height: 1.7;
     color: var(--gray);
-    margin-bottom: 3rem;
+    margin-bottom: var(--space-7);
   }
 
   .contact-email {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 2rem 3rem;
+    gap: var(--space-2);
+    padding: var(--space-6) var(--space-7);
     background: var(--surface);
     border: 1px solid var(--gray-dark);
     text-decoration: none;
     transition: all 0.4s var(--transition);
-    margin-bottom: 2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-6);
   }
 
   .contact-email:hover {
-    border-color: var(--cyan);
-    box-shadow: 0 10px 40px rgba(0, 255, 245, 0.15);
+    border-color: var(--accent-contact);
+    box-shadow: 0 10px 40px rgba(139, 0, 255, 0.15);
     transform: translateY(-4px);
   }
 
   .email-label {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     color: var(--gray);
     letter-spacing: 0.2em;
   }
 
   .email-address {
     font-family: var(--font-display);
-    font-size: 1.3rem;
+    font-size: var(--fs-lg);
     color: var(--white);
   }
 
   .email-icon {
     width: 24px;
     height: 24px;
-    color: var(--cyan);
+    color: var(--accent-contact);
     opacity: 0;
     transform: translate(-4px, 4px);
     transition: all 0.3s ease;
   }
 
-  .contact-email:hover .email-icon {
-    opacity: 1;
-    transform: translate(4px, -4px);
+  @media (prefers-reduced-motion: no-preference) {
+    .contact-email:hover .email-icon {
+      opacity: 1;
+      transform: translate(4px, -4px);
+    }
   }
 
   .contact-links {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: var(--space-4);
     flex-wrap: wrap;
   }
 
   .contact-link {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
     background: var(--surface);
     border: 1px solid var(--gray-dark);
+    border-radius: var(--radius-md);
     text-decoration: none;
     transition: all 0.3s var(--transition);
   }
 
   .contact-link:hover {
-    border-color: var(--magenta);
-    color: var(--magenta);
+    border-color: var(--accent-contact);
+    color: var(--accent-contact);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 0, 170, 0.15);
+    box-shadow: 0 8px 25px rgba(139, 0, 255, 0.15);
   }
 
   .link-name {
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     color: var(--white);
   }
 
@@ -197,14 +175,16 @@ const links = [
     transition: all 0.3s ease;
   }
 
-  .contact-link:hover .link-arrow {
-    opacity: 1;
-    transform: translate(4px, 0);
+  @media (prefers-reduced-motion: no-preference) {
+    .contact-link:hover .link-arrow {
+      opacity: 1;
+      transform: translate(4px, 0);
+    }
   }
 
   .footer {
-    margin-top: 6rem;
-    padding-top: 2rem;
+    margin-top: var(--space-9);
+    padding-top: var(--space-6);
     border-top: 1px solid var(--gray-dark);
   }
 
@@ -214,10 +194,10 @@ const links = [
 
   .footer-brand {
     font-family: var(--font-display);
-    font-size: 1.4rem;
+    font-size: var(--fs-xl);
     font-weight: 700;
     color: var(--white);
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-3);
   }
 
   .brand-bracket {
@@ -225,32 +205,32 @@ const links = [
   }
 
   .footer-copy {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     color: var(--gray);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
   }
 
   .footer-tech {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     color: var(--gray);
   }
 
   .dot {
     width: 4px;
     height: 4px;
-    background: var(--cyan);
+    background: var(--accent-contact);
     border-radius: 50%;
   }
 
   @media (max-width: 600px) {
     .contact-email {
       width: 100%;
-      padding: 1.5rem;
+      padding: var(--space-5);
     }
 
     .contact-links {

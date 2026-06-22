@@ -19,10 +19,15 @@ model Technology {
 
 model Project {
   id           Int      @id @default(autoincrement())
+  slug         String   @unique
   name         String
   nameEn       String
   description  String
   descriptionEn String
+  details      String   @default("")
+  detailsEn    String   @default("")
+  repoUrl      String?
+  screenshots  String[]
   order        Int      @default(0)
   color        String   @default("#00fff5")
   techStack    String[]

@@ -1,4 +1,5 @@
 ---
+import SectionHeader from './SectionHeader.astro';
 import { translations, type Lang } from '../data/translations';
 import { getTechnologies } from '../lib/content';
 
@@ -14,23 +15,20 @@ const technologies = await getTechnologies();
 const categories = [...new Set(technologies.map(t => t.category))];
 ---
 
-<section class="tech-stack" id="skills">
+<section class="tech-stack" id="skills" data-accent="skills">
   <div class="container">
-    <header class="section-header">
-      <span class="section-label">{t.tech.label}</span>
-      <h2 class="section-title">{t.tech.title}</h2>
-    </header>
+    <SectionHeader variant="bordered" label={t.tech.label} title={t.tech.title} />
 
-    <div class="stack-tabs">
-      <button class="tab active" data-stack="all">ALL</button>
+    <div class="stack-tabs" role="tablist" aria-label={t.tech.title}>
+      <button class="tab active" data-stack="all" role="tab" id="tab-all" aria-selected="true" aria-controls="tech-panel" tabindex="0">ALL</button>
       {categories.map(cat => (
-        <button class="tab" data-stack={cat}>{cat.toUpperCase()}</button>
+        <button class="tab" data-stack={cat} role="tab" id={`tab-${cat}`} aria-selected="false" aria-controls="tech-panel" tabindex="-1">{cat.toUpperCase()}</button>
       ))}
     </div>
 
-    <div class="tech-grid">
+    <div class="tech-grid" id="tech-panel" role="tabpanel" aria-labelledby="tab-all" tabindex="0">
       {technologies.map((tech, index) => (
-        <article class="tech-card" data-stack={tech.category} style={`--i: ${index}`}>
+        <article class="tech-card" data-stack={tech.category} data-gsap="tilt stagger" style={`--i: ${index}`}>
           <div class="tech-icon">
             <img src={`/icons/${tech.icon}.svg`} alt={tech.name} />
           </div>
@@ -43,42 +41,59 @@ const categories = [...new Set(technologies.map(t => t.category))];
 </section>
 
 <script>
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const stack = tab.getAttribute('data-stack');
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      document.querySelectorAll('.tech-card').forEach(card => {
-        if (stack === 'all' || card.getAttribute('data-stack') === stack) {
-          (card as HTMLElement).style.display = 'flex';
-          setTimeout(() => (card as HTMLElement).style.opacity = '1', 50);
-        } else {
-          (card as HTMLElement).style.display = 'none';
-        }
-      });
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  function activateTab(target) {
+    const stack = target.getAttribute('data-stack');
+    tabs.forEach(t => {
+      const isActive = t === target;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', String(isActive));
+      t.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+    document.querySelectorAll('.tech-card').forEach(card => {
+      const el = /** @type {HTMLElement} */ (card);
+      if (stack === 'all' || card.getAttribute('data-stack') === stack) {
+        el.style.display = 'flex';
+        setTimeout(() => el.style.opacity = '1', 50);
+      } else {
+        el.style.display = 'none';
+      }
+    });
+    target.focus();
+  }
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      const i = tabs.indexOf(tab);
+      let next = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = tabs[(i + 1) % tabs.length];
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (e.key === 'Home') next = tabs[0];
+      else if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); activateTab(next); }
     });
   });
 </script>
 
 <style>
-  .tech-stack { padding: 8rem 2rem; }
-  .container { max-width: 1200px; margin: 0 auto; }
-  .section-header { text-align: center; margin-bottom: 3rem; }
-  .section-label { display: block; font-family: var(--font-mono); font-size: 0.8rem; color: var(--magenta); letter-spacing: 0.3em; margin-bottom: 0.75rem; }
-  .section-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.02em; }
-  .stack-tabs { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 3rem; }
-  .tab { padding: 0.6rem 1.25rem; background: transparent; border: 1px solid var(--gray-dark); border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--gray); letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s var(--transition); }
+  .tech-stack { padding: var(--space-10) var(--space-6); }
+  .container { max-width: var(--container-wide); margin: 0 auto; }
+  .stack-tabs { display: flex; justify-content: center; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-7); }
+  .tab { padding: 0.6rem 1.25rem; background: transparent; border: 1px solid var(--gray-dark); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--gray); letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s var(--transition); }
   .tab:hover { border-color: var(--gray); color: var(--white); }
-  .tab.active { background: var(--cyan); border-color: var(--cyan); color: var(--dark); }
-  .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
-  .tech-card { position: relative; background: var(--surface); border: 1px solid var(--gray-dark); border-radius: 8px; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; transition: all 0.4s var(--transition-slow); animation: cardIn 0.6s var(--transition-slow) forwards; animation-delay: calc(var(--i) * 0.05s); opacity: 0; }
-  @keyframes cardIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .tech-glow { position: absolute; inset: 0; border-radius: 8px; background: radial-gradient(circle at center, var(--cyan), transparent 70%); opacity: 0; transition: opacity 0.4s var(--transition); pointer-events: none; }
-  .tech-card:hover { transform: translateY(-6px); border-color: var(--cyan); box-shadow: 0 12px 40px rgba(0, 255, 245, 0.12); }
+  .tab.active { background: var(--accent-skills); border-color: var(--accent-skills); color: var(--dark); }
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); }
+  .tech-card { position: relative; background: var(--surface); border: 1px solid var(--gray-dark); border-radius: var(--radius-md); padding: var(--space-5) var(--space-4); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); cursor: pointer; transition: all 0.4s var(--transition-slow); opacity: 1; will-change: transform; }
+  .tech-glow { position: absolute; inset: 0; border-radius: var(--radius-md); background: radial-gradient(circle at center, var(--accent-skills), transparent 70%); opacity: 0; transition: opacity 0.4s var(--transition); pointer-events: none; }
+  .tech-card:hover { transform: translateY(-6px); border-color: var(--accent-skills); box-shadow: 0 12px 40px rgba(0, 255, 245, 0.12); }
+  @media (hover: hover) {
+    .tech-card[data-gsap="tilt"]:hover { transform: none; }
+  }
   .tech-card:hover .tech-glow { opacity: 0.08; }
   .tech-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition); }
   .tech-icon img { width: 100%; height: 100%; object-fit: contain; }
   .tech-card:hover .tech-icon { transform: scale(1.1); }
-  .tech-name { font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; color: var(--white); letter-spacing: 0.02em; }
-  @media (max-width: 768px) { .tech-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } .tech-card { padding: 1.25rem 0.75rem; } .tech-icon { width: 36px; height: 36px; } }
+  .tech-name { font-family: var(--font-body); font-size: var(--fs-sm); font-weight: 500; color: var(--white); letter-spacing: 0.02em; }
+  .tech-grid:focus-visible { outline-offset: -2px; }
+  @media (max-width: 768px) { .tech-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); } .tech-card { padding: var(--space-5) var(--space-3); } .tech-icon { width: 36px; height: 36px; } }
 </style>

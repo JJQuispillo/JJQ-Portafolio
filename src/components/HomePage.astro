@@ -1,0 +1,452 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "./Hero.astro";
+import TechStack from "./TechStack.astro";
+import Experience from "./Experience.astro";
+import Projects from "./Projects.astro";
+import Education from "./Education.astro";
+import Contact from "./Contact.astro";
+
+import { getTranslations, type Lang } from "../lib/content";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = await getTranslations(lang);
+---
+
+<Layout lang={lang}>
+    <nav class="navbar" id="navbar">
+        <a href="#hero" class="nav-logo">
+            <span class="logo-bracket">&lt;</span>JJQ<span class="logo-bracket"
+                >/&gt;</span
+            >
+        </a>
+
+        <div class="nav-links" id="nav-links">
+            <a href="#skills" class="nav-link"
+                ><span class="link-num">01.</span><span class="link-label"
+                    >{t.nav.skills}</span
+                ></a
+            >
+            <a href="#experience" class="nav-link"
+                ><span class="link-num">02.</span><span class="link-label"
+                    >{t.nav.experience}</span
+                ></a
+            >
+            <a href="#projects" class="nav-link"
+                ><span class="link-num">03.</span><span class="link-label"
+                    >{t.nav.projects}</span
+                ></a
+            >
+            <a href="#education" class="nav-link"
+                ><span class="link-num">04.</span><span class="link-label"
+                    >{t.nav.education}</span
+                ></a
+            >
+            <a href="#contact" class="nav-link"
+                ><span class="link-num">05.</span><span class="link-label"
+                    >{t.nav.contact}</span
+                ></a
+            >
+        </div>
+
+        <div class="nav-right">
+            <div class="lang-switch">
+                <a
+                    href="/es/"
+                    class={`lang-btn ${lang === "es" ? "active" : ""}`}>es</a
+                >
+                <span class="lang-divider">/</span>
+                <a
+                    href="/en/"
+                    class={`lang-btn ${lang === "en" ? "active" : ""}`}>en</a
+                >
+            </div>
+            <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false">
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+                <span class="menu-bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="animate-section visible" id="hero-wrap">
+            <Hero lang={lang} />
+        </div>
+
+        <div class="section-divider divider-1" aria-hidden="true"></div>
+
+        <div class="animate-section" id="skills-wrap" data-gsap="fade-up" data-stagger="true">
+            <TechStack lang={lang} />
+        </div>
+
+        <div class="section-divider divider-2" aria-hidden="true"></div>
+
+        <div class="animate-section" id="experience-wrap" data-gsap="fade-up" data-delay="0.05">
+            <Experience lang={lang} />
+        </div>
+
+        <div class="section-divider divider-3" aria-hidden="true"></div>
+
+        <div class="animate-section" id="projects-wrap" data-gsap="fade-up" data-delay="0.1" data-stagger="true">
+            <Projects lang={lang} />
+        </div>
+
+        <div class="section-divider divider-4" aria-hidden="true"></div>
+
+        <div class="animate-section" id="education-wrap" data-gsap="fade-up" data-delay="0.15">
+            <Education lang={lang} />
+        </div>
+
+        <div class="section-divider divider-5" aria-hidden="true"></div>
+
+        <div class="animate-section" id="contact-wrap" data-gsap="fade-up" data-delay="0.2">
+            <Contact lang={lang} />
+        </div>
+    </main>
+</Layout>
+
+<script>
+    const navbar = document.getElementById("navbar");
+
+    // Scroll reveal animations (skip elements GSAP will handle)
+    const gsapAvailable = window.matchMedia('(hover: hover) and (min-width: 768px) and (prefers-reduced-motion: no-preference)').matches;
+    const sections = document.querySelectorAll(".animate-section:not(.visible)");
+    const revealObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    sections.forEach((s) => {
+        if (gsapAvailable && s.hasAttribute('data-gsap')) return;
+        revealObserver.observe(s);
+    });
+
+    // Navbar scrolled state + active section tracking
+    const navLinkEls = document.querySelectorAll(".nav-link");
+
+    function updateNav() {
+        if (!navbar) return;
+        navbar.classList.toggle("scrolled", window.scrollY > 50);
+
+        const scrollPos = window.scrollY + 200;
+        let activeIndex = -1;
+
+        document.querySelectorAll("section[id]").forEach((section, i) => {
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
+            if (scrollPos >= top && scrollPos < bottom) {
+                activeIndex = i;
+            }
+        });
+
+        navLinkEls.forEach((link, i) => {
+            const isActive = i === activeIndex;
+            link.classList.toggle("active", isActive);
+            if (isActive) {
+                link.setAttribute("aria-current", "section");
+            } else {
+                link.removeAttribute("aria-current");
+            }
+            const num = link.querySelector(".link-num");
+            if (num) {
+                num.classList.toggle("active", isActive);
+            }
+        });
+    }
+
+    window.addEventListener("scroll", updateNav, { passive: true });
+    window.addEventListener("resize", updateNav, { passive: true });
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById("menu-toggle");
+    const navMenu = document.getElementById("nav-links");
+    if (menuToggle && navMenu) {
+        const MOBILE = window.matchMedia('(max-width: 768px)');
+        const focusableLinks = () => Array.from(navMenu.querySelectorAll('a'));
+        let lastFocused = null;
+
+        function openMenu() {
+            lastFocused = document.activeElement;
+            navMenu.classList.add("open");
+            menuToggle.setAttribute("aria-expanded", "true");
+            if (MOBILE.matches) {
+                const first = focusableLinks()[0];
+                if (first instanceof HTMLElement) first.focus();
+            }
+        }
+        function closeMenu() {
+            navMenu.classList.remove("open");
+            menuToggle.setAttribute("aria-expanded", "false");
+            if (lastFocused instanceof HTMLElement && MOBILE.matches) {
+                lastFocused.focus();
+            }
+        }
+
+        menuToggle.addEventListener("click", () => {
+            if (navMenu.classList.contains("open")) closeMenu();
+            else openMenu();
+        });
+        navMenu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => closeMenu());
+        });
+        document.addEventListener("keydown", (e) => {
+            if (!navMenu.classList.contains("open") || !MOBILE.matches) return;
+            if (e.key === "Escape") {
+                e.preventDefault();
+                closeMenu();
+                return;
+            }
+            if (e.key === "Tab") {
+                const items = focusableLinks();
+                if (!items.length) return;
+                const first = items[0];
+                const last = items[items.length - 1];
+                const active = document.activeElement;
+                if (e.shiftKey && active === first) {
+                    e.preventDefault();
+                    if (last instanceof HTMLElement) last.focus();
+                } else if (!e.shiftKey && active === last) {
+                    e.preventDefault();
+                    if (first instanceof HTMLElement) first.focus();
+                }
+            }
+        });
+        MOBILE.addEventListener("change", () => {
+            if (!MOBILE.matches && navMenu.classList.contains("open")) {
+                navMenu.classList.remove("open");
+                menuToggle.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+</script>
+
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 3rem;
+        transition: all 0.4s var(--transition-slow);
+    }
+    .navbar.scrolled {
+        padding: 1rem 3rem;
+        background: rgba(5, 5, 8, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .nav-logo {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--white);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+    }
+    .nav-logo:hover {
+        color: var(--cyan);
+        text-shadow: 0 0 20px var(--cyan);
+    }
+    .logo-bracket {
+        color: var(--magenta);
+    }
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--cyan);
+        transition: width 0.3s var(--transition);
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+        width: 100%;
+    }
+    .link-num {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: var(--magenta);
+        opacity: 0;
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+    .link-num.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .link-label {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--gray);
+        transition: color 0.3s ease;
+    }
+    .nav-link:hover .link-label,
+    .nav-link.active .link-label {
+        color: var(--white);
+    }
+    .lang-switch {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .lang-btn {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--gray);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .lang-btn:hover {
+        color: var(--white);
+    }
+    .lang-btn.active {
+        color: var(--cyan);
+        text-shadow: 0 0 10px var(--cyan);
+    }
+    .lang-divider {
+        color: var(--gray-dark);
+    }
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .menu-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 28px;
+        height: 28px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+    }
+    .menu-bar {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: var(--white);
+        transition: all 0.3s var(--transition);
+        border-radius: 1px;
+    }
+    .menu-toggle[aria-expanded="true"] .menu-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    .menu-toggle[aria-expanded="true"] .menu-bar:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle[aria-expanded="true"] .menu-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .animate-section.visible:first-child {
+        transition-delay: 0.3s;
+    }
+
+    .section-divider {
+        height: 80px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .divider-1 {
+        background: linear-gradient(135deg, transparent 0%, rgba(0, 255, 245, 0.06) 50%, transparent 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    .divider-2 {
+        background: linear-gradient(225deg, transparent 0%, rgba(255, 0, 170, 0.06) 50%, transparent 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%);
+    }
+
+    .divider-3 {
+        background: linear-gradient(135deg, transparent 0%, rgba(139, 0, 255, 0.06) 50%, transparent 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    .divider-4 {
+        background: linear-gradient(225deg, transparent 0%, rgba(0, 215, 255, 0.06) 50%, transparent 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%);
+    }
+
+    .divider-5 {
+        background: linear-gradient(135deg, transparent 0%, rgba(255, 0, 170, 0.06) 50%, transparent 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem 1.5rem;
+        }
+        .nav-links {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(300px, 80vw);
+            height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(5, 5, 8, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 4rem 2rem;
+            transform: translateX(100%);
+            visibility: hidden;
+            transition: transform 0.4s var(--transition-slow), visibility 0.4s var(--transition-slow);
+            z-index: 999;
+        }
+        .nav-links.open {
+            transform: translateX(0);
+            visibility: visible;
+        }
+        .nav-link {
+            font-size: 1.1rem;
+            justify-content: flex-end;
+        }
+        .link-num {
+            display: inline;
+            font-size: 0.85rem;
+        }
+        .nav-link::after {
+            display: none;
+        }
+        .menu-toggle {
+            display: flex;
+        }
+    }
+</style>
